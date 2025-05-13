@@ -1,0 +1,82 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="signup.css">
+  <title>Ratham-Signup</title>
+  
+</head>
+<body>
+
+<fieldset class="f1">
+  <h2>Signup</h2>
+  <form id="signupForm">
+    <input type="text" id="firstname" name="firstname" placeholder="Firstname" required>
+    <input type="text" id="lastname" name="lastname" placeholder="Lastname" required><br>
+    <input type="tel" id="number" name="number" placeholder="Mobile Number" minlength="10" maxlength="10" required><br>
+    <input type="password" id="password" name="password" placeholder="Password" required><br>
+    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required oninput="validatePasswordMatch();"><br>
+
+    <p id="passwordMatch"></p>
+
+    <button type="submit" class="Signup">Signup</button><br><br><hr>
+  <p> </p> <a href="login.html">Login</a>
+  </form>
+</fieldset>
+
+
+<script>
+function validatePasswordMatch() {
+    var password = document.getElementById("password").value;
+    var confirmPassword = document.getElementById("confirmPassword").value;
+    var passwordMatchMessage = document.getElementById("passwordMatch");
+
+    if (password === confirmPassword) {
+        passwordMatchMessage.textContent = "Passwords matched";
+        passwordMatchMessage.style.color = "green";
+        return true;
+    } else {
+        passwordMatchMessage.textContent = "Passwords not matched!";
+        passwordMatchMessage.style.color = "red";
+        return false;
+    }
+}
+
+document.getElementById("signupForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if (!validatePasswordMatch()) {
+        alert("Passwords do not match!");
+        return;
+    }
+
+    const firstname = document.getElementById("firstname").value;
+    const lastname = document.getElementById("lastname").value;
+    const number = document.getElementById("number").value;
+    const password = document.getElementById("password").value;
+
+    try {
+        const response = await fetch("http://localhost:3000/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+           
+            body: JSON.stringify({ Firstname: firstname, Lastname: lastname, number: number, password: password }),
+
+        });
+
+        if (response.ok) {
+            window.location.href = "login.html";
+        } else {
+            const data = await response.json();
+            alert(data.error || "Signup failed!");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+    }
+});
+</script>
+
+</body>
+</html>
